@@ -9,6 +9,7 @@ from google.genai import types
 load_dotenv()
 
 MODEL_NAMES = [
+    "claude-haiku-5-5",
     "claude-sonnet-5-5",
     "claude-sonnet-5",
     "claude-opus-4-6",
@@ -358,6 +359,16 @@ def send_request(prompt: str, model_name: str):
                 messages=[{"role": "user", "content": prompt}],
             )
 
+            return response.choices[0].message.content
+
+        elif "claude-haiku-5-5" in model_name:
+            # top_p is deprecated for this model (the API rejects it).
+            response = client.chat.completions.create(
+                model=model_name,
+                temperature=1,
+                max_completion_tokens=256,
+                messages=[{"role": "user", "content": prompt}]
+            )
             return response.choices[0].message.content
 
         else:
